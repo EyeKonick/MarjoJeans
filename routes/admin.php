@@ -4,7 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Admin\Auth\AdminController;
+use App\Http\Controllers\Admin\Auth\ApartmentController;
 use App\Http\Controllers\Landlord\Auth\LandlordController;
+use App\Http\Controllers\Admin\Auth\addApartmentController;
 use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController;
 
 Route::prefix('admin')->name('admin.')->group(function(){
@@ -29,7 +31,12 @@ Route::middleware('auth:admin')->group(function () {
                 ->name('logout');
 
     Route::get('/overview', [AdminController::class, 'overview'])->name('overview');
-    Route::get('/pending-list', [AdminController::class, 'pendingList'])->name('pending_list');
+
+
+    Route::get('/pending-list', [addApartmentController::class, 'pendingList'])->name('pending_list');
+    Route::get('/approve-apartment/{id}', [addApartmentController::class, 'approveApartment'])->name('approve_apartment');
+    Route::get('/reject-apartment/{id}', [addApartmentController::class, 'rejectApartment'])->name('reject_apartment');
+
     Route::get('/manage-list', [AdminController::class, 'manageList'])->name('manage_list');
     Route::get('/user-management', [AdminController::class, 'userManagement'])->name('user_management');
 });

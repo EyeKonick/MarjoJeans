@@ -1,4 +1,3 @@
-<!-- resources/views/landlord/auth/list-of-uploads.blade.php -->
 @extends('landlord.dashboard')
 
 @section('content')
@@ -17,6 +16,9 @@
                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Price
                 </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Status
+                </th>
             </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
@@ -29,7 +31,13 @@
                         {{ $upload['address'] }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {{ $upload['price'] }}
+                        {{ $upload['room_rate'] }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                        <!-- Conditional class based on status -->
+                        <span class="@if($upload['status'] == 'approved') text-green-500 @elseif($upload['status'] == 'rejected') text-red-500 @else text-gray-500 @endif font-medium">
+                            {{ ucfirst($upload['status']) }}
+                        </span>
                     </td>
                 </tr>
             @endforeach

@@ -3,7 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Landlord\ProfileController;
+use App\Http\Controllers\Landlord\Auth\showPendingList;
 use App\Http\Controllers\Landlord\Auth\LandlordController;
+use App\Http\Controllers\Landlord\Auth\showUploadsController;
+use App\Http\Controllers\Landlord\Auth\AddApartmentController;
 use App\Http\Controllers\Landlord\Auth\RegisteredUserController;
 use App\Http\Controllers\Landlord\Auth\AuthenticatedSessionController;
 
@@ -34,8 +37,18 @@ Route::middleware('auth:landlord')->group(function () {
                 ->name('logout');
 
     Route::get('/add-apartment', [LandlordController::class, 'addApartment'])->name('add_apartment');
-     Route::get('/list-uploads', [LandlordController::class, 'listUploads'])->name('list_uploads');
-    Route::get('/list-pending', [LandlordController::class, 'listPending'])->name('list_pending');
+     Route::get('/list-uploads', [showUploadsController::class, 'uploadList'])->name('list_uploads');
+    Route::get('/list-pending', [showPendingList::class, 'showPendingList'])->name('list_pending');
     Route::get('/update-apartment', [LandlordController::class, 'updateApartment'])->name('update_apartment');
+
+    Route::delete('/apartments/{id}', [ShowPendingList::class, 'deleteApartment'])->name('apartments.delete');
+    Route::get('/apartments/{id}/edit', [LandlordController::class, 'edit'])->name('apartments.edit');
+
+    // Route for updating the apartment
+    Route::put('/apartments/{id}', [LandlordController::class, 'update'])->name('apartments.update');
+
+
+    Route::post('/add-apartment', [AddApartmentController::class, 'store'])->name('add_apartment_item');
+
 });
 });
