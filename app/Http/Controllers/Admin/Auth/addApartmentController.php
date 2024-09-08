@@ -11,7 +11,7 @@ class addApartmentController extends Controller
     public function pendingList()
     {
         // Fetch apartments with status 'pending'
-        $pending = Apartment::where('status', 'pending')->get();
+        $pending = Apartment::where('status', 'pending')->orderby('created_at', 'desc')->get();
 
         return view('admin.auth.pending-list', compact('pending'));
     }

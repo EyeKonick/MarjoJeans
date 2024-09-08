@@ -16,8 +16,9 @@ class ShowPendingList extends Controller
 
         // Fetch pending apartments for the logged-in landlord
         $pending = Apartment::where('landlord_id', $landlordId)
-                            ->where('status', 'pending')
-                            ->get();
+                    ->where('status', 'pending')
+                    ->orderBy('created_at', 'desc') // Sort by created date in descending order
+                    ->get();
 
         return view('landlord.auth.list-of-pending', compact('pending'));
     }

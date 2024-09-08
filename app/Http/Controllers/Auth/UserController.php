@@ -11,7 +11,7 @@ class UserController extends Controller
     public function index()
     {
         // Fetch only approved apartments
-        $apartments = Apartment::where('status', 'approved')->get();
+        $apartments = Apartment::where('status', 'approved')->orderBy('created_at', 'desc')->get();
 
         return view('dashboard', compact('apartments'));
     }

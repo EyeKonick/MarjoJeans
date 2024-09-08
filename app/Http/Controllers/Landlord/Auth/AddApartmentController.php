@@ -5,12 +5,13 @@ namespace App\Http\Controllers\Landlord\Auth;
 use App\Models\Apartment;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth; // Import Auth facade
+use Illuminate\Support\Facades\Auth;
 
 class AddApartmentController extends Controller
 {
     public function store(Request $request)
     {
+        // Validate request data
         $validated = $request->validate([
             'landlord_name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
@@ -29,7 +30,11 @@ class AddApartmentController extends Controller
         if ($request->hasFile('apartment_image')) {
             $file = $request->file('apartment_image');
             $filename = time() . '.' . $file->getClientOriginalExtension();
-            $file->storeAs('public/images/apartments', $filename); // Store in the specified folder
+
+            // Store the file in the 'public/images/apartments' directory
+            $file->storeAs('public/images/apartments', $filename);
+
+            // Add the filename to validated data
             $validated['apartment_image'] = $filename;
         }
 

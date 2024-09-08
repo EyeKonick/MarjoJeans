@@ -14,6 +14,7 @@
         @csrf
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <input type="hidden" name="landlord_name" value="{{ Auth::user()->name }}">
 
             <!-- Automatically display landlord's name -->
             <div>
@@ -96,7 +97,7 @@
             <!-- Apartment Image -->
             <div>
                 <label for="apartment_image" class="block text-gray-700 font-semibold mb-2">Apartment Image</label>
-                <input type="file" id="apartment_image" name="apartment_image" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('apartment_image') border-red-500 @enderror">
+                <input type="file" id="apartment_image" name="apartment_image" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('apartment_image') border-red-500 @enderror " value="{{ old('apartment_image') }}">
                 @error('apartment_image')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror

@@ -6,7 +6,8 @@
                     <!-- Apartment Image -->
                     <div class="w-full md:w-1/3 lg:w-1/4 relative flex">
                         <div class="w-full h-full">
-                            <img src="{{ asset('storage/images/apartments/' . $apartment->apartment_image) }}" alt="{{ $apartment->apartment_name }}" class="w-full h-full object-cover rounded-t-lg md:rounded-t-none md:rounded-l-lg">
+                            <!-- Display the apartment image -->
+                            <img src="{{ asset('storage/images/apartments/' . $apartment->apartment_image) }}" class="w-full h-full object-cover rounded-t-lg md:rounded-t-none md:rounded-l-lg" alt="Apartment Image">
                         </div>
                     </div>
 

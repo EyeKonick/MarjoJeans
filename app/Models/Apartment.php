@@ -16,6 +16,7 @@ class Apartment extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
+        'landlord_id',
         'landlord_name',
         'address',
         'contact_no',
