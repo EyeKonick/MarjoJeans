@@ -3,15 +3,16 @@
 namespace App\Http\Controllers\Landlord\Auth;
 
 use App\Models\Apartment;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth; // Import Auth facade
 
 class AddApartmentController extends Controller
 {
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'landlord_name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
             'contact_no' => 'required|string|max:20',
             'facebook' => 'nullable|string|max:255',
@@ -24,15 +25,18 @@ class AddApartmentController extends Controller
             'description' => 'nullable|string',
         ]);
 
+        // Handle file upload
         if ($request->hasFile('apartment_image')) {
             $file = $request->file('apartment_image');
             $filename = time() . '.' . $file->getClientOriginalExtension();
-            $file->storeAs('public/images/apartments', $filename);
+            $file->storeAs('public/images/apartments', $filename); // Store in the specified folder
             $validated['apartment_image'] = $filename;
         }
 
+        // Include the logged-in landlord's ID
         $validated['landlord_id'] = Auth::id();
 
+        // Create the apartment entry
         Apartment::create($validated);
 
         return redirect()->back()->with('success', 'Apartment added successfully and is pending approval.');
