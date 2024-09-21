@@ -28,12 +28,13 @@ class AddApartmentController extends Controller
         ]);
 
         if ($request->hasFile('apartment_image')) {
-            $file = $request->file('apartment_image');
-            $filename = time() . '.' . $file->getClientOriginalExtension();
+            $filenameWithExtension = $request->file('apartment_image')->getClientOriginalExtension();
+            $filename = pathinfo($filenameWithExtension, PATHINFO_FILENAME);
+            $extension = $request->file('apartment_image')->getClientOriginalExtension();
+            $file = $filename . '.' . time() . '.' . $extension;
+            $request->file('apartment_image')->storeAs('public/images/apartments', $file);
 
-            $file->storeAs('public/images/apartments', $filename);
-
-            $validated['apartment_image'] = $filename;
+            $validated['apartment_image'] = $file;
         }
 
         $validated['landlord_id'] = Auth::id();

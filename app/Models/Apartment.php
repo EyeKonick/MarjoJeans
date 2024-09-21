@@ -9,10 +9,9 @@ class Apartment extends Model
 {
     use HasFactory;
 
-    // Specify the table if it's not the plural form of the model name
     protected $table = 'apartments';
 
-    // Define which attributes are mass assignable
+
     protected $primaryKey = 'id';
 
     protected $fillable = [
@@ -28,7 +27,7 @@ class Apartment extends Model
         'room_rate',
         'apartment_image',
         'description',
-        'status', // Make sure this field exists in your database migration
+        'status',
     ];
 
     public function landlord()

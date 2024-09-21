@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\UserController;
 use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Controllers\Auth\ApartmentController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\RegisteredUserController;
@@ -59,4 +60,5 @@ Route::middleware('auth:web')->group(function () {
                 ->name('logout');
 
     Route::get('/dashboard', [ UserController::class, 'index'])->name('dashboard');
+    Route::get('/apartments/{id}', [ApartmentController::class, 'show'])->name('apartments.show');
 });
