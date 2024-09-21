@@ -16,10 +16,8 @@ class LandlordController extends Controller
 
     public function edit(Request $request, $id)
     {
-        // Retrieve the apartment by ID
         $apartment = Apartment::findOrFail($id);
 
-        // Pass the apartment to the view
         return view('landlord.auth.update-apartment', compact('apartment'));
     }
 
@@ -52,7 +50,6 @@ class LandlordController extends Controller
         $apartment->room_rate = $request->input('room_rate');
         $apartment->description = $request->input('description');
 
-        // Handle file upload
         if ($request->hasFile('apartment_image')) {
             if ($apartment->apartment_image) {
                 Storage::delete('public/images/apartments/' . $apartment->apartment_image);

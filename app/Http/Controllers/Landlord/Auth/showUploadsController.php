@@ -11,7 +11,6 @@ class showUploadsController extends Controller
 {
     public function uploadList()
     {
-        // Fetch apartments that belong to the authenticated landlord
         $uploads = Apartment::where('landlord_id', Auth::id())
                             ->whereIn('status', ['approved', 'rejected'])
                             ->get();

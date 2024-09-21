@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\Auth\ApartmentController;
 use App\Http\Controllers\Landlord\Auth\LandlordController;
 use App\Http\Controllers\Admin\Auth\addApartmentController;
 use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Admin\Auth\manageListController;
 
 Route::prefix('admin')->name('admin.')->group(function(){
 Route::middleware('guest:admin')->group(function () {
@@ -19,7 +20,7 @@ Route::middleware('guest:admin')->group(function () {
 // auth route
 Route::middleware('auth:admin')->group(function () {
     Route::get('/dashboard', function () {
-        return view('admin.dashboard');
+        return view('admin.auth.overview');
     })->name('dashboard');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -37,7 +38,11 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('/approve-apartment/{id}', [addApartmentController::class, 'approveApartment'])->name('approve_apartment');
     Route::get('/reject-apartment/{id}', [addApartmentController::class, 'rejectApartment'])->name('reject_apartment');
 
-    Route::get('/manage-list', [AdminController::class, 'manageList'])->name('manage_list');
     Route::get('/user-management', [AdminController::class, 'userManagement'])->name('user_management');
+
+    Route::get('/manage-list', [manageListController::class, 'manageList'])->name('manage_list');
+    Route::get('/edit-apartment/{id}', [manageListController::class, 'editApartment'])->name('edit_apartment');
+    Route::put('/update-apartment/{id}', [manageListController::class, 'updateApartment'])->name('update_apartment');
+    Route::delete('/delete-apartment/{id}', [manageListController::class, 'deleteApartment'])->name('delete_apartment');
 });
 });

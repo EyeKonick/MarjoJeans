@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Landlord\Auth;
 use App\Models\Apartment;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Auth\Events\Validated;
 use Illuminate\Support\Facades\Auth;
 
 class AddApartmentController extends Controller
@@ -26,22 +27,18 @@ class AddApartmentController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        // Handle file upload
         if ($request->hasFile('apartment_image')) {
             $file = $request->file('apartment_image');
             $filename = time() . '.' . $file->getClientOriginalExtension();
 
-            // Store the file in the 'public/images/apartments' directory
             $file->storeAs('public/images/apartments', $filename);
 
-            // Add the filename to validated data
             $validated['apartment_image'] = $filename;
         }
 
-        // Include the logged-in landlord's ID
         $validated['landlord_id'] = Auth::id();
 
-        // Create the apartment entry
+
         Apartment::create($validated);
 
         return redirect()->back()->with('success', 'Apartment added successfully and is pending approval.');

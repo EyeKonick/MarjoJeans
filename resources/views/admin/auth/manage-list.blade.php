@@ -1,4 +1,3 @@
-<!-- resources/views/admin/auth/pending-list.blade.php -->
 @extends('admin.dashboard')
 
 @section('content')
@@ -16,13 +15,13 @@
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Address
                     </th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Owner Name
                     </th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">
                         Price
                     </th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Action
                     </th>
                 </tr>
@@ -37,19 +36,28 @@
                         {{ $listing['address'] }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        {{ $listing['owner_name'] }}
+                        {{ $listing['landlord_name'] }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        {{ $listing['price'] }}
+                        {{ $listing['room_rate'] }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <a href="#" class="text-green-600 hover:text-green-900">Approve</a>
-                        <a href="#" class="text-red-600 hover:text-red-900 ml-4">Reject</a>
+                        <!-- Edit Link -->
+                        <a href="{{ route('admin.edit_apartment', $listing->id) }}" class="text-white rounded px-4 py-1 bg-blue-600 hover:bg-blue-500">Edit</a>
+                        <!-- Delete Link -->
+                        <form action="{{ route('admin.delete_apartment', $listing->id) }}" method="POST" class="inline-block">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-white rounded ml-2 px-4 py-1 bg-red-600 hover:bg-red-500">Delete</button>
+                        </form>
                     </td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
+    </div>
+    <div class="mt-4">
+        {{ $manage->links() }}
     </div>
 </div>
 @endsection

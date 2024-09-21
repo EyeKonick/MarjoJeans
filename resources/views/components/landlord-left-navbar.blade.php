@@ -15,10 +15,5 @@
                   {{ request()->routeIs('landlord.list_pending') ? 'bg-white text-gray-900' : 'text-white hover:bg-white hover:text-gray-900' }}">
             List of Pending
         </a>
-        <a href="{{ route('landlord.update_apartment') }}"
-           class="block py-3 px-4 rounded-lg transition duration-150 ease-in-out
-                  {{ request()->routeIs('landlord.update_apartment') ? 'bg-white text-gray-900' : 'text-white hover:bg-white hover:text-gray-900' }}">
-            Update Apartment
-        </a>
     </nav>
 </aside>

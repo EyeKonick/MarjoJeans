@@ -10,7 +10,6 @@ class addApartmentController extends Controller
 {
     public function pendingList()
     {
-        // Fetch apartments with status 'pending'
         $pending = Apartment::where('status', 'pending')->orderby('created_at', 'desc')->get();
 
         return view('admin.auth.pending-list', compact('pending'));
@@ -33,4 +32,5 @@ class addApartmentController extends Controller
 
         return redirect()->route('admin.pending_list')->with('success', 'Apartment rejected successfully.');
     }
+
 }
