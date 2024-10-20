@@ -11,6 +11,6 @@ class ApartmentController extends Controller
     public function show($id)
     {
         $apartment = Apartment::findOrFail($id);
-        return view('apartmentShow', compact('apartment'));
+        return view('landlord.auth.update-apartment', compact('apartment'));
     }
 }

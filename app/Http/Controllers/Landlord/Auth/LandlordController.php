@@ -17,13 +17,15 @@ class LandlordController extends Controller
     public function edit(Request $request, $id)
     {
         $apartment = Apartment::findOrFail($id);
+        // Pass the redirect query parameter to the view
+        $redirect = $request->input('redirect', 'list_uploads'); // Default to 'list_uploads' if no redirect is provided
 
-        return view('landlord.auth.update-apartment', compact('apartment'));
+        return view('landlord.auth.update-apartment', compact('apartment', 'redirect'));
     }
-
 
     public function update(Request $request, $id)
     {
+        // Validate the request
         $request->validate([
             'landlord_name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
@@ -34,7 +36,9 @@ class LandlordController extends Controller
             'location' => 'required|string|max:255',
             'rooms_available' => 'required|integer|min:1',
             'room_rate' => 'required|numeric|min:0',
-            'apartment_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'thumbnail_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'display_image_1' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'display_image_2' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'description' => 'nullable|string',
         ]);
 
@@ -50,18 +54,47 @@ class LandlordController extends Controller
         $apartment->room_rate = $request->input('room_rate');
         $apartment->description = $request->input('description');
 
-        if ($request->hasFile('apartment_image')) {
-            if ($apartment->apartment_image) {
-                Storage::delete('public/images/apartments/' . $apartment->apartment_image);
+        // Check for uploaded images
+        if ($request->hasFile('thumbnail_image')) {
+            // Delete old thumbnail image
+            if ($apartment->thumbnail_image) {
+                Storage::delete('public/images/apartments/' . $apartment->thumbnail_image);
             }
-
-            $image = $request->file('apartment_image');
-            $imagePath = $image->store('public/images/apartments');
-            $apartment->apartment_image = basename($imagePath);
+            // Store new thumbnail image
+            $thumbnailImage = $request->file('thumbnail_image');
+            $thumbnailPath = $thumbnailImage->store('public/images/apartments');
+            $apartment->thumbnail_image = basename($thumbnailPath);
         }
 
+        if ($request->hasFile('display_image_1')) {
+            // Delete old display image 1
+            if ($apartment->display_image_1) {
+                Storage::delete('public/images/apartments/' . $apartment->display_image_1);
+            }
+            // Store new display image 1
+            $displayImage1 = $request->file('display_image_1');
+            $displayPath1 = $displayImage1->store('public/images/apartments');
+            $apartment->display_image_1 = basename($displayPath1);
+        }
+
+        if ($request->hasFile('display_image_2')) {
+            // Delete old display image 2
+            if ($apartment->display_image_2) {
+                Storage::delete('public/images/apartments/' . $apartment->display_image_2);
+            }
+            // Store new display image 2
+            $displayImage2 = $request->file('display_image_2');
+            $displayPath2 = $displayImage2->store('public/images/apartments');
+            $apartment->display_image_2 = basename($displayPath2);
+        }
+
+        // Save the apartment
         $apartment->save();
 
-        return redirect()->route('landlord.list_pending')->with('success', 'Apartment updated successfully.');
+        // Redirect to the appropriate page
+        $redirectRoute = $request->input('redirect', 'list_uploads'); // Default to 'list_uploads' if no redirect is provided
+        return redirect()->route("landlord.$redirectRoute")->with('success', 'Apartment updated successfully.');
     }
+
+
 }

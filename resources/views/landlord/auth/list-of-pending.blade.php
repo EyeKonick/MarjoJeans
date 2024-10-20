@@ -51,15 +51,12 @@
                         {{ ucfirst($item->status) }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-                        <a href="{{ route('landlord.apartments.edit', $item->id) }}" class=" hover:text-blue-900 mr-2 bg-green-500 text-white py-1 px-2 rounded-md">Update</a>
+                        <a href="{{ route('landlord.apartments.edit', ['id' => $item->id, 'redirect' => 'pending']) }}" class="hover:text-blue-900 mr-2 bg-green-500 text-white py-1 px-2 rounded-md">Update</a>
 
-                        <!-- Form to delete apartment -->
-                        <form action="{{ route('landlord.apartments.delete', $item->id) }}" method="POST" style="display:inline;">
+                        <form action="{{ route('landlord.apartments.delete', $item->id) }}" method="POST" class="inline-block">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class=" hover:text-red-400 bg-red-500 text-white py-1 px-2 rounded-md" onclick="return confirm('Are you sure you want to delete this apartment?');">
-                                Remove
-                            </button>
+                            <button type="submit" class="text-white rounded ml-2 px-4 py-1 bg-red-600 hover:bg-red-500">Delete</button>
                         </form>
                     </td>
                 </tr>
