@@ -73,7 +73,7 @@
                         // Iterate through the apartments and append them to the list
                         apartments.forEach(apartment => {
                             let apartmentHtml = `
-                                <a href="/apartments/${apartment.id}" class="block apartment-item">
+                              <a href="{{ route('apartments.show', $apartment->id) }}" class="block apartment-item">
                                     <div class="bg-gray-900 text-white overflow-hidden shadow-lg sm:rounded-lg flex flex-col md:flex-row mb-6 h-80 transition-transform duration-300 hover:scale-105">
                                         <div class="w-full md:w-1/3 lg:w-1/4 relative flex">
                                             <div class="w-full h-full">
