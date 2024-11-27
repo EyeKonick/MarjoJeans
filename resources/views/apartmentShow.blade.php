@@ -142,6 +142,4 @@
             }).addTo(map);
         });
     </script>
-    
-          
 </x-app-layout>

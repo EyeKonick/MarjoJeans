@@ -259,63 +259,55 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const map = L.map('map');
-        let marker = null;
+    const map = L.map('map');
+    let marker = null;
 
-        function setMarker(lat, lng) {
-            if (marker) {
-                marker.setLatLng([lat, lng]);
-            } else {
-                marker = L.marker([lat, lng], { draggable: true }).addTo(map);
-            }
-            map.setView([lat, lng], 14);
-            updateInputs(lat, lng);
+    function setMarker(lat, lng) {
+        if (marker) {
+            marker.setLatLng([lat, lng]);
+        } else {
+            marker = L.marker([lat, lng], { draggable: true }).addTo(map);
+
+            marker.on('dragend', function () {
+                const position = marker.getLatLng();
+                updateInputs(position.lat, position.lng);
+            });
         }
+        map.setView([lat, lng], 14);
+        updateInputs(lat, lng);
+    }
 
-      
-        function updateInputs(lat, lng) {
-            document.getElementById('latitude').value = lat;
-            document.getElementById('longitude').value = lng;
-        }
+    function updateInputs(lat, lng) {
+        document.getElementById('latitude').value = lat;
+        document.getElementById('longitude').value = lng;
+    }
 
-       
-        const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-            attribution: '&copy; <a href="https://www.esri.com">Esri</a> contributors',
-            maxZoom: 19
-        });
-
-        const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-            maxZoom: 19
-        });
-
-      
-        satelliteLayer.addTo(map);
-
-      
-        const baseLayers = {
-            "Satellite": satelliteLayer,
-            "Street": streetLayer
-        };
-
-        L.control.layers(baseLayers).addTo(map);
-
-     
-        setMarker(11.429917430404114, 122.59678557515146);
-
-     
-        map.on('click', function (e) {
-            const { lat, lng } = e.latlng;
-            setMarker(lat, lng);
-        });
-
-        map.on('layeradd', function () {
-            if (marker) {
-                marker.on('dragend', function () {
-                    const position = marker.getLatLng();
-                    updateInputs(position.lat, position.lng);
-                });
-            }
-        });
+    const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: '&copy; <a href="https://www.esri.com">Esri</a> contributors',
+        maxZoom: 19
     });
+
+    const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19
+    });
+
+    satelliteLayer.addTo(map);
+
+    const baseLayers = {
+        "Satellite": satelliteLayer,
+        "Street": streetLayer
+    };
+
+    L.control.layers(baseLayers).addTo(map);
+
+    
+    map.on('click', function (e) {
+        const { lat, lng } = e.latlng;
+        setMarker(lat, lng);
+        updateInputs(lat, lng);
+    });
+
+    setMarker(11.429917430404114, 122.59678557515146);
+});
 </script>
