@@ -69,12 +69,36 @@
 
             <!-- Location -->
             <div>
-                <label for="location" class="block text-gray-700 font-semibold mb-2">Location <span class="text-red-500">*</span></label>
-                <input type="text" id="location" name="location" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('location') border-red-500 @enderror" placeholder="Enter location" value="{{ old('location') }}">
-                @error('location')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                @enderror
+                <label for="location" class="block text-gray-700 font-semibold mb-2">
+                    Location <span class="text-red-500">*</span>
+                </label>
+                
+                <!-- Leaflet Map -->
+                <div id="map" style="width: 100%; height: 300px; border: 1px solid #ddd;"></div>
+                
+                <!-- Latitude and Longitude Inputs -->
+                <div class="mt-4">
+                    <input 
+                        type="hidden" 
+                        id="latitude" 
+                        name="latitude" 
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" 
+                        placeholder="Latitude" 
+                        readonly>
+                </div>
+                
+                <div class="mt-4">
+                    <input 
+                        type="hidden" 
+                        id="longitude" 
+                        name="longitude" 
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" 
+                        placeholder="Longitude" 
+                        readonly>
+                </div>
             </div>
+            
+
 
             <!-- Rooms Available -->
             <div>
@@ -104,6 +128,7 @@
                         type="file"
                         id="apartment_image_input"
                         class="hidden"
+                        name="apartment_images[]"
                         multiple
                         accept="image/*"
                         onchange="addImages(event)">
@@ -143,9 +168,8 @@
 </div>
 
 @endsection
-
 <script>
-    let selectedFiles = []; // Store the selected files
+    let selectedFiles = [];
 
     function addImages(event) {
         const files = event.target.files;
@@ -156,27 +180,27 @@
                 const reader = new FileReader();
 
                 reader.onload = function (e) {
-                    // Create image element
+                   
                     const img = document.createElement('img');
                     img.src = e.target.result;
                     img.alt = file.name;
                     img.className = 'w-full h-32 object-cover rounded shadow-md';
 
-                    // Wrapper div
+                  
                     const wrapper = document.createElement('div');
                     wrapper.className = 'relative group';
 
-                    // Delete icon
+                
                     const deleteIcon = document.createElement('div');
                     deleteIcon.className =
                         'absolute top-0 right-0 m-1 p-1 bg-red-600 text-white rounded-full cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-300';
                     deleteIcon.innerHTML =
                         '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>';
 
-                    // Delete logic
+                   
                     deleteIcon.onclick = function () {
-                        wrapper.remove(); // Remove the preview
-                        selectedFiles = selectedFiles.filter((f) => f.name !== file.name); // Remove from the selectedFiles array
+                        wrapper.remove();
+                        selectedFiles = selectedFiles.filter((f) => f.name !== file.name);
                         updateFileList();
                     };
 
@@ -184,7 +208,7 @@
                     wrapper.appendChild(deleteIcon);
                     previewContainer.appendChild(wrapper);
 
-                    // Add file to selectedFiles array
+                    
                     selectedFiles.push(file);
                 };
 
@@ -192,15 +216,98 @@
             }
         });
 
-        // Reset the file input to allow selecting the same file again
+        
         event.target.value = '';
         updateFileList();
     }
 
     function updateFileList() {
-        const dataTransfer = new DataTransfer();
+        const dataTransfer = new DataTransfer(); 
         selectedFiles.forEach((file) => dataTransfer.items.add(file));
-        document.getElementById('apartment_image_input').files = dataTransfer.files;
+        const fileInput = document.getElementById('apartment_image_input');
+        fileInput.files = dataTransfer.files;
     }
 </script>
 
+<link 
+    rel="stylesheet" 
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<script 
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer>
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const map = L.map('map');
+        let marker = null;
+
+        function setMarker(lat, lng) {
+            if (marker) {
+                marker.setLatLng([lat, lng]);
+            } else {
+                marker = L.marker([lat, lng], { draggable: true }).addTo(map);
+            }
+            map.setView([lat, lng], 14);
+            updateInputs(lat, lng);
+        }
+
+      
+        function updateInputs(lat, lng) {
+            document.getElementById('latitude').value = lat;
+            document.getElementById('longitude').value = lng;
+        }
+
+       
+        const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '&copy; <a href="https://www.esri.com">Esri</a> contributors',
+            maxZoom: 19
+        });
+
+        const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 19
+        });
+
+      
+        satelliteLayer.addTo(map);
+
+      
+        const baseLayers = {
+            "Satellite": satelliteLayer,
+            "Street": streetLayer
+        };
+
+        L.control.layers(baseLayers).addTo(map);
+
+     
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    setMarker(latitude, longitude);
+                },
+                () => {
+                    setMarker(11.429917430404114, 122.59678557515146);
+                }
+            );
+        } else {
+            setMarker(11.429917430404114, 122.59678557515146);
+        }
+
+     
+        map.on('click', function (e) {
+            const { lat, lng } = e.latlng;
+            setMarker(lat, lng);
+        });
+
+        map.on('layeradd', function () {
+            if (marker) {
+                marker.on('dragend', function () {
+                    const position = marker.getLatLng();
+                    updateInputs(position.lat, position.lng);
+                });
+            }
+        });
+    });
+</script>

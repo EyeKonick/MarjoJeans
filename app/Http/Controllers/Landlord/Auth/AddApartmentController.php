@@ -12,7 +12,7 @@ class AddApartmentController extends Controller
 {
     public function store(Request $request)
     {
-        // Validate request data
+
         $validated = $request->validate([
             'landlord_name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
@@ -20,15 +20,16 @@ class AddApartmentController extends Controller
             'facebook' => 'nullable|string|max:255',
             'email' => 'required|email|max:255',
             'apartment_name' => 'required|string|max:255',
-            'location' => 'required|string|max:255',
+            'latitude' => 'required|string|max:255',
+            'longitude' => 'required|string|max:255',
             'rooms_available' => 'required|integer',
             'room_rate' => 'required|numeric',
-            'apartment_images' => 'required|array|min:1', // Require at least 1 image
-            'apartment_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Individual image validation
+            'apartment_images' => 'required|array|min:1',
+            'apartment_images.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'description' => 'nullable|string',
         ]);
 
-        // Store image paths
+ 
         $imagePaths = [];
         if ($request->hasFile('apartment_images')) {
             foreach ($request->file('apartment_images') as $file) {
@@ -40,10 +41,10 @@ class AddApartmentController extends Controller
             }
         }
 
-        $validated['apartment_images'] = json_encode($imagePaths); // Store paths as JSON
+        $validated['apartment_images'] = json_encode($imagePaths);
         $validated['landlord_id'] = Auth::id();
 
-        // Save to database
+     
         Apartment::create($validated);
 
         return redirect()->back()->with('success', 'Apartment added successfully and is pending approval.');
