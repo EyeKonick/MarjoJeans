@@ -6,6 +6,11 @@
     <h2 class="text-2xl font-bold mb-6">Landlord Management List</h2>
 
     <!-- Table -->
+    @if(session('success'))
+        <div class="bg-green-100 text-green-800 p-4 rounded-md mb-4">
+            {{ session('success') }}
+        </div>
+        @endif
     <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">

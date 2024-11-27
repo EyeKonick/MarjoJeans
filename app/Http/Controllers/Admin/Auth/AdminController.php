@@ -21,8 +21,8 @@ class AdminController extends Controller
 
     public function edit($id)
     {
-        $user = Landlord::findOrFail($id);
-        return view('admin.auth.edit-user', compact('user'));
+        $landlord = Landlord::findOrFail($id);
+        return view('admin.auth.edit-user', compact('landlord'));
     }
 
     public function destroy($id)
@@ -32,5 +32,22 @@ class AdminController extends Controller
 
         return redirect()->route('admin.user_management')->with('success', 'User deleted successfully.');
     }
+
+    public function update(Request $request, $id)
+    {
+        $landlord = Landlord::findOrFail($id);
+
+
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:landlords,email,' . $id,
+            'contact' => 'nullable|string|max:15',
+        ]);
+
+
+        $landlord->update($validatedData);
+        return redirect()->route('admin.user_management')->with('success', 'Landlord updated successfully!');
+    }
+
 
 }
