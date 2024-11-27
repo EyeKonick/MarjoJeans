@@ -25,7 +25,7 @@ class AddApartmentController extends Controller
             'rooms_available' => 'required|integer',
             'room_rate' => 'required|numeric',
             'apartment_images' => 'required|array|min:1',
-            'apartment_images.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'apartment_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             'description' => 'nullable|string',
         ]);
 

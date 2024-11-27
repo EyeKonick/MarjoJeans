@@ -10,7 +10,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('landlord.add_apartment_item') }}" enctype="multipart/form-data" class="space-y-8">
+    <form id="addApartment" enctype="multipart/form-data" method="POST" action="{{ route('landlord.add_apartment_item') }}" class="space-y-8">
         @csrf
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -169,65 +169,85 @@
 
 @endsection
 <script>
-    let selectedFiles = [];
+let selectedFiles = [];
 
-    function addImages(event) {
-        const files = event.target.files;
-        const previewContainer = document.getElementById('preview-container');
+function addImages(event) {
+    const files = event.target.files;
+    const previewContainer = document.getElementById('preview-container');
 
-        Array.from(files).forEach((file) => {
-            if (file.type.startsWith('image/')) {
-                const reader = new FileReader();
+    // Loop through selected files
+    Array.from(files).forEach((file) => {
+        // Only accept image files
+        if (file.type.startsWith('image/') && !selectedFiles.some(f => f.name === file.name)) {
+            const reader = new FileReader();
 
-                reader.onload = function (e) {
-                   
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.alt = file.name;
-                    img.className = 'w-full h-32 object-cover rounded shadow-md';
+            reader.onload = function (e) {
+                // Create an image element to display the preview
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.alt = file.name;
+                img.className = 'w-full h-32 object-cover rounded shadow-md';
 
-                  
-                    const wrapper = document.createElement('div');
-                    wrapper.className = 'relative group';
+                const wrapper = document.createElement('div');
+                wrapper.className = 'relative group';
 
-                
-                    const deleteIcon = document.createElement('div');
-                    deleteIcon.className =
-                        'absolute top-0 right-0 m-1 p-1 bg-red-600 text-white rounded-full cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-300';
-                    deleteIcon.innerHTML =
-                        '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>';
+                const deleteIcon = document.createElement('div');
+                deleteIcon.className = 'absolute top-0 right-0 m-1 p-1 bg-red-600 text-white rounded-full cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-300';
+                deleteIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>';
 
-                   
-                    deleteIcon.onclick = function () {
-                        wrapper.remove();
-                        selectedFiles = selectedFiles.filter((f) => f.name !== file.name);
-                        updateFileList();
-                    };
-
-                    wrapper.appendChild(img);
-                    wrapper.appendChild(deleteIcon);
-                    previewContainer.appendChild(wrapper);
-
-                    
-                    selectedFiles.push(file);
+                deleteIcon.onclick = function () {
+                    wrapper.remove();
+                    selectedFiles = selectedFiles.filter((f) => f.name !== file.name);
+                    updateFileList();
                 };
 
-                reader.readAsDataURL(file);
-            }
-        });
+                wrapper.appendChild(img);
+                wrapper.appendChild(deleteIcon);
+                previewContainer.appendChild(wrapper);
 
-        
-        event.target.value = '';
-        updateFileList();
-    }
+                selectedFiles.push(file);
+            };
 
-    function updateFileList() {
-        const dataTransfer = new DataTransfer(); 
-        selectedFiles.forEach((file) => dataTransfer.items.add(file));
+            reader.readAsDataURL(file);
+        }
+    });
+
+    event.target.value = ''; // Reset input value to allow re-selecting the same file
+    updateFileList();
+}
+
+function updateFileList() {
+    const dataTransfer = new DataTransfer();
+
+    selectedFiles.forEach((file) => dataTransfer.items.add(file));
+
+    const fileInput = document.getElementById('apartment_image_input');
+    fileInput.files = dataTransfer.files;
+
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('addApartment').addEventListener('submit', function (event) {
         const fileInput = document.getElementById('apartment_image_input');
+
+        if (selectedFiles.length === 0) {
+            event.preventDefault();
+            alert("Please select images to upload.");
+            return;
+        }
+
+        const dataTransfer = new DataTransfer();
+        selectedFiles.forEach((file) => dataTransfer.items.add(file));
         fileInput.files = dataTransfer.files;
-    }
+
+    });
+});
+
+
+
+
 </script>
+
 
 <link 
     rel="stylesheet" 
@@ -281,19 +301,7 @@
         L.control.layers(baseLayers).addTo(map);
 
      
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const { latitude, longitude } = position.coords;
-                    setMarker(latitude, longitude);
-                },
-                () => {
-                    setMarker(11.429917430404114, 122.59678557515146);
-                }
-            );
-        } else {
-            setMarker(11.429917430404114, 122.59678557515146);
-        }
+        setMarker(11.429917430404114, 122.59678557515146);
 
      
         map.on('click', function (e) {
