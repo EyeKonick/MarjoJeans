@@ -65,5 +65,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/overview', [OverviewController::class, 'index'])->name('overview');
         Route::get('/landlords/{id}/edit', [AdminController::class, 'edit'])->name('landlords.edit');
         Route::delete('/landlords/{id}', [AdminController::class, 'destroy'])->name('landlords.delete');
+        Route::put('/landlords/{id}/update', [AdminController::class, 'update'])->name('landlords.update');
+
     });
 });
