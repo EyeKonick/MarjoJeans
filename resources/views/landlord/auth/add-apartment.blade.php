@@ -212,7 +212,7 @@ function addImages(event) {
         }
     });
 
-    event.target.value = ''; // Reset input value to allow re-selecting the same file
+    event.target.value = '';
     updateFileList();
 }
 
