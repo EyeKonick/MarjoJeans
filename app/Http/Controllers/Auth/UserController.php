@@ -22,12 +22,17 @@ class UserController extends Controller
         $apartments = Apartment::where('status', 'approved')
             ->where(function ($query) use ($search) {
                 $query->where('apartment_name', 'like', '%' . $search . '%')
-                    ->orWhere('location', 'like', '%' . $search . '%')
-                    ->orWhere('landlord_name', 'like', '%' . $search . '%');
+                      ->orWhere('location', 'like', '%' . $search . '%')
+                      ->orWhere('landlord_name', 'like', '%' . $search . '%');
             })
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->get()
+            ->map(function ($apartment) {
+                $apartment->thumbnail = $apartment->thumbnail; // Add thumbnail attribute
+                return $apartment;
+            });
 
         return response()->json($apartments);
     }
+
 }

@@ -22,7 +22,10 @@ return new class extends Migration
             $table->string('location');
             $table->integer('rooms_available');
             $table->decimal('room_rate', 8, 2);
-            $table->string('apartment_image')->nullable();
+            $table->string('apartment_image_1')->nullable(); // First image
+            $table->string('apartment_image_2')->nullable(); // Second image
+            $table->string('apartment_image_3')->nullable(); // Third image
+            $table->string('apartment_image_4')->nullable(); // Fourth image
             $table->text('description')->nullable();
             $table->enum('status', ['pending', 'approved'])->default('pending'); // Status for approval
             $table->timestamps();

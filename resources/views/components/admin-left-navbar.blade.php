@@ -12,8 +12,5 @@
         <a href="{{ route('admin.user_management') }}" class="block text-white hover:bg-white hover:text-gray-900 py-3 px-4 rounded-lg transition duration-150 ease-in-out">
             User Management
         </a>
-        <a class="block text-white hover:bg-white hover:text-gray-900 py-3 px-4 rounded-lg transition duration-150 ease-in-out">
-            Settings
-        </a>
     </nav>
 </aside>

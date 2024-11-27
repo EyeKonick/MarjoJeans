@@ -94,14 +94,35 @@
                 @enderror
             </div>
 
-            <!-- Apartment Image -->
+            <!-- Apartment Images -->
             <div>
-                <label for="apartment_image" class="block text-gray-700 font-semibold mb-2">Apartment Image</label>
-                <input type="file" id="apartment_image" name="apartment_image" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('apartment_image') border-red-500 @enderror " value="{{ old('apartment_image') }}">
-                @error('apartment_image')
+                <label for="apartment_images" class="block text-gray-700 font-semibold mb-2">
+                    Apartment Images<span class="text-red-500">*</span>
+                </label>
+                <div class="flex items-center gap-4">
+                    <input
+                        type="file"
+                        id="apartment_image_input"
+                        class="hidden"
+                        multiple
+                        accept="image/*"
+                        onchange="addImages(event)">
+                    <button
+                        type="button"
+                        onclick="document.getElementById('apartment_image_input').click()"
+                        class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 transition duration-200">
+                        Add Images
+                    </button>
+                </div>
+                <small class="text-gray-500 mt-2 block">You can  (must upload atleast 1 image) <br> Allowed formats: jpeg, png, jpg, gif.</small>
+                @error('apartment_images')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
+
+                <!-- Preview Container -->
+                <div id="preview-container" class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4"></div>
             </div>
+
 
             <!-- Other Description -->
             <div class="md:col-span-2">
@@ -120,4 +141,66 @@
     </form>
 
 </div>
+
 @endsection
+
+<script>
+    let selectedFiles = []; // Store the selected files
+
+    function addImages(event) {
+        const files = event.target.files;
+        const previewContainer = document.getElementById('preview-container');
+
+        Array.from(files).forEach((file) => {
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    // Create image element
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.alt = file.name;
+                    img.className = 'w-full h-32 object-cover rounded shadow-md';
+
+                    // Wrapper div
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'relative group';
+
+                    // Delete icon
+                    const deleteIcon = document.createElement('div');
+                    deleteIcon.className =
+                        'absolute top-0 right-0 m-1 p-1 bg-red-600 text-white rounded-full cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-300';
+                    deleteIcon.innerHTML =
+                        '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>';
+
+                    // Delete logic
+                    deleteIcon.onclick = function () {
+                        wrapper.remove(); // Remove the preview
+                        selectedFiles = selectedFiles.filter((f) => f.name !== file.name); // Remove from the selectedFiles array
+                        updateFileList();
+                    };
+
+                    wrapper.appendChild(img);
+                    wrapper.appendChild(deleteIcon);
+                    previewContainer.appendChild(wrapper);
+
+                    // Add file to selectedFiles array
+                    selectedFiles.push(file);
+                };
+
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Reset the file input to allow selecting the same file again
+        event.target.value = '';
+        updateFileList();
+    }
+
+    function updateFileList() {
+        const dataTransfer = new DataTransfer();
+        selectedFiles.forEach((file) => dataTransfer.items.add(file));
+        document.getElementById('apartment_image_input').files = dataTransfer.files;
+    }
+</script>
+

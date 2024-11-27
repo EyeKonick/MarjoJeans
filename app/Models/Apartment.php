@@ -25,7 +25,7 @@ class Apartment extends Model
         'location',
         'rooms_available',
         'room_rate',
-        'apartment_image',
+        'apartment_images',
         'description',
         'status',
     ];
@@ -34,4 +34,16 @@ class Apartment extends Model
     {
         return $this->belongsTo(Landlord::class);
     }
+
+    protected $casts = [
+        'apartment_images' => 'array',
+    ];
+
+    // Accessor to get the thumbnail image
+    public function getThumbnailAttribute()
+    {
+        $images = $this->apartment_images; // Already an array
+        return $images[0] ?? null;
+    }
+
 }

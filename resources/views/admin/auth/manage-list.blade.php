@@ -21,7 +21,7 @@
                     <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">
                         Price
                     </th>
-                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase  tracking-wider">
                         Action
                     </th>
                 </tr>
@@ -41,16 +41,19 @@
                     <td class="px-6 py-4 whitespace-nowrap">
                         {{ $listing['room_rate'] }}
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <!-- Edit Link -->
-                        <a href="{{ route('admin.edit_apartment', $listing->id) }}" class="text-white rounded px-4 py-1 bg-blue-600 hover:bg-blue-500">Edit</a>
-                        <!-- Delete Link -->
-                        <form action="{{ route('admin.delete_apartment', $listing->id) }}" method="POST" class="inline-block">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-white rounded ml-2 px-4 py-1 bg-red-600 hover:bg-red-500">Delete</button>
-                        </form>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
+                        <div class="flex justify-center space-x-2">
+                            <!-- Edit Link -->
+                            <a href="{{ route('admin.edit_apartment', $listing->id) }}" class="text-white rounded px-4 py-1 bg-blue-600 hover:bg-blue-500">Edit</a>
+                            <!-- Delete Link -->
+                            <form action="{{ route('admin.delete_apartment', $listing->id) }}" method="POST" class="inline-block">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-white rounded px-4 py-1 bg-red-600 hover:bg-red-500">Delete</button>
+                            </form>
+                        </div>
                     </td>
+
                 </tr>
                 @endforeach
             </tbody>

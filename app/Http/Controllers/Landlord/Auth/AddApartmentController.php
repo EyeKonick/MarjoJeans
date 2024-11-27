@@ -23,25 +23,31 @@ class AddApartmentController extends Controller
             'location' => 'required|string|max:255',
             'rooms_available' => 'required|integer',
             'room_rate' => 'required|numeric',
-            'apartment_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'apartment_images' => 'required|array|min:1', // Require at least 1 image
+            'apartment_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Individual image validation
             'description' => 'nullable|string',
         ]);
 
-        if ($request->hasFile('apartment_image')) {
-            $filenameWithExtension = $request->file('apartment_image')->getClientOriginalExtension();
-            $filename = pathinfo($filenameWithExtension, PATHINFO_FILENAME);
-            $extension = $request->file('apartment_image')->getClientOriginalExtension();
-            $file = $filename . '.' . time() . '.' . $extension;
-            $request->file('apartment_image')->storeAs('public/images/apartments', $file);
-
-            $validated['apartment_image'] = $file;
+        // Store image paths
+        $imagePaths = [];
+        if ($request->hasFile('apartment_images')) {
+            foreach ($request->file('apartment_images') as $file) {
+                $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                $extension = $file->getClientOriginalExtension();
+                $uniqueFileName = $filename . '_' . time() . '.' . $extension;
+                $file->storeAs('public/images/apartments', $uniqueFileName);
+                $imagePaths[] = $uniqueFileName;
+            }
         }
 
+        $validated['apartment_images'] = json_encode($imagePaths); // Store paths as JSON
         $validated['landlord_id'] = Auth::id();
 
-
+        // Save to database
         Apartment::create($validated);
 
         return redirect()->back()->with('success', 'Apartment added successfully and is pending approval.');
     }
+
+
 }
