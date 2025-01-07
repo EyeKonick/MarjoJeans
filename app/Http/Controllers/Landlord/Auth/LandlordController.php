@@ -26,75 +26,71 @@ class LandlordController extends Controller
     public function update(Request $request, $id)
     {
         // Validate the request
-        $request->validate([
+        $validated = $request->validate([
             'landlord_name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
             'contact_no' => 'required|string|max:20',
             'facebook' => 'nullable|string|max:255',
             'email' => 'required|email|max:255',
             'apartment_name' => 'required|string|max:255',
-            'location' => 'required|string|max:255',
+            'latitude' => 'required|string|max:255',
+            'longitude' => 'required|string|max:255',
             'rooms_available' => 'required|integer|min:1',
             'room_rate' => 'required|numeric|min:0',
-            'thumbnail_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'display_image_1' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'display_image_2' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'apartment_images' => 'nullable|array',
+            'apartment_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             'description' => 'nullable|string',
+            'remove_images' => 'nullable|array', // For removing existing images
         ]);
 
         $apartment = Apartment::findOrFail($id);
-        $apartment->landlord_name = $request->input('landlord_name');
-        $apartment->address = $request->input('address');
-        $apartment->contact_no = $request->input('contact_no');
-        $apartment->facebook = $request->input('facebook');
-        $apartment->email = $request->input('email');
-        $apartment->apartment_name = $request->input('apartment_name');
-        $apartment->location = $request->input('location');
-        $apartment->rooms_available = $request->input('rooms_available');
-        $apartment->room_rate = $request->input('room_rate');
-        $apartment->description = $request->input('description');
 
-        // Check for uploaded images
-        if ($request->hasFile('thumbnail_image')) {
-            // Delete old thumbnail image
-            if ($apartment->thumbnail_image) {
-                Storage::delete('public/images/apartments/' . $apartment->thumbnail_image);
+        // Update basic fields
+        $apartment->fill([
+            'landlord_name' => $validated['landlord_name'],
+            'address' => $validated['address'],
+            'contact_no' => $validated['contact_no'],
+            'facebook' => $validated['facebook'],
+            'email' => $validated['email'],
+            'apartment_name' => $validated['apartment_name'],
+            'latitude' => $validated['latitude'],
+            'longitude' => $validated['longitude'],
+            'rooms_available' => $validated['rooms_available'],
+            'room_rate' => $validated['room_rate'],
+            'description' => $validated['description'],
+        ]);
+
+        // Handle image removal
+        $existingImages = json_decode($apartment->apartment_images, true) ?? [];
+        if ($request->has('remove_images')) {
+            foreach ($request->input('remove_images') as $removeImage) {
+                if (($key = array_search($removeImage, $existingImages)) !== false) {
+                    Storage::delete("public/images/apartments/$removeImage");
+                    unset($existingImages[$key]);
+                }
             }
-            // Store new thumbnail image
-            $thumbnailImage = $request->file('thumbnail_image');
-            $thumbnailPath = $thumbnailImage->store('public/images/apartments');
-            $apartment->thumbnail_image = basename($thumbnailPath);
         }
 
-        if ($request->hasFile('display_image_1')) {
-            // Delete old display image 1
-            if ($apartment->display_image_1) {
-                Storage::delete('public/images/apartments/' . $apartment->display_image_1);
+        // Handle new image uploads
+        if ($request->hasFile('apartment_images')) {
+            foreach ($request->file('apartment_images') as $file) {
+                $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                $extension = $file->getClientOriginalExtension();
+                $uniqueFileName = $filename . '_' . time() . '.' . $extension;
+                $file->storeAs('public/images/apartments', $uniqueFileName);
+                $existingImages[] = $uniqueFileName;
             }
-            // Store new display image 1
-            $displayImage1 = $request->file('display_image_1');
-            $displayPath1 = $displayImage1->store('public/images/apartments');
-            $apartment->display_image_1 = basename($displayPath1);
         }
 
-        if ($request->hasFile('display_image_2')) {
-            // Delete old display image 2
-            if ($apartment->display_image_2) {
-                Storage::delete('public/images/apartments/' . $apartment->display_image_2);
-            }
-            // Store new display image 2
-            $displayImage2 = $request->file('display_image_2');
-            $displayPath2 = $displayImage2->store('public/images/apartments');
-            $apartment->display_image_2 = basename($displayPath2);
-        }
+        // Update the images field
+        $apartment->apartment_images = json_encode(array_values($existingImages));
 
-        // Save the apartment
+        // Save the updated apartment
         $apartment->save();
 
-        // Redirect to the appropriate page
-        $redirectRoute = $request->input('redirect', 'list_uploads'); // Default to 'list_uploads' if no redirect is provided
-        return redirect()->route("landlord.$redirectRoute")->with('success', 'Apartment updated successfully.');
+        return redirect()->route('landlord.list_uploads')->with('success', 'Apartment updated successfully.');
     }
+
 
 
 }

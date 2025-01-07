@@ -11,22 +11,19 @@ class ShowUploadsController extends Controller
 {
     public function uploadList()
     {
-        // Get the status filter from the request using the request() helper
         $statusFilter = request('status');
 
-        // Build the query
-        $uploads = Apartment::where('landlord_id', Auth::id());
 
-        // If a status is selected, filter by that status
-        if ($statusFilter) {
-            $uploads->where('status', $statusFilter);
-        }
-
-        // Paginate the results
-        $uploads = $uploads->paginate(10);
+        $uploads = Apartment::where('landlord_id', Auth::id())
+            ->when($statusFilter, function ($query, $statusFilter) {
+                $query->where('status', $statusFilter);
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
 
         return view('landlord.auth.list-of-uploads', compact('uploads'));
     }
+
 
 
 
@@ -37,7 +34,6 @@ class ShowUploadsController extends Controller
         $apartment = Apartment::find($id);
 
         if ($apartment && $apartment->landlord_id === Auth::id()) {
-            // Allow deletion for approved or rejected apartments
             if (in_array($apartment->status, ['approved', 'rejected'])) {
                 $apartment->delete();
                 return redirect()->back()->with('success', 'Apartment deleted successfully.');
@@ -47,6 +43,4 @@ class ShowUploadsController extends Controller
 
         return redirect()->back()->with('error', 'Apartment not found or unauthorized access.');
     }
-
-
 }

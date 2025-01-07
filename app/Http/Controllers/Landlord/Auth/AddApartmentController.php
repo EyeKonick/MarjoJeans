@@ -29,7 +29,6 @@ class AddApartmentController extends Controller
             'description' => 'nullable|string',
         ]);
 
- 
         $imagePaths = [];
         if ($request->hasFile('apartment_images')) {
             foreach ($request->file('apartment_images') as $file) {
@@ -44,7 +43,7 @@ class AddApartmentController extends Controller
         $validated['apartment_images'] = json_encode($imagePaths);
         $validated['landlord_id'] = Auth::id();
 
-     
+
         Apartment::create($validated);
 
         return redirect()->back()->with('success', 'Apartment added successfully and is pending approval.');

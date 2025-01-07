@@ -9,64 +9,65 @@
         @method('PUT')
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <!-- Existing data should be populated -->
+            <!-- Display data instead of input fields -->
             <div>
                 <label for="landlord_name" class="block text-gray-700 font-medium">Landlord Name:</label>
-                <input type="text" id="landlord_name" name="landlord_name" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" value="{{ old('landlord_name', $apartment->landlord_name) }}" required>
+                <p class="mt-1 text-gray-900">{{ $apartment->landlord_name }}</p>
             </div>
 
             <div>
                 <label for="address" class="block text-gray-700 font-medium">Address:</label>
-                <input type="text" id="address" name="address" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" value="{{ old('address', $apartment->address) }}" required>
+                <p class="mt-1 text-gray-900">{{ $apartment->address }}</p>
             </div>
 
             <div>
                 <label for="contact_no" class="block text-gray-700 font-medium">Contact No.:</label>
-                <input type="text" id="contact_no" name="contact_no" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" value="{{ old('contact_no', $apartment->contact_no) }}" required>
+                <p class="mt-1 text-gray-900">{{ $apartment->contact_no }}</p>
             </div>
 
             <div>
                 <label for="facebook" class="block text-gray-700 font-medium">Facebook:</label>
-                <input type="text" id="facebook" name="facebook" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" value="{{ old('facebook', $apartment->facebook) }}">
+                <p class="mt-1 text-gray-900">{{ $apartment->facebook }}</p>
             </div>
 
             <div>
                 <label for="email" class="block text-gray-700 font-medium">Email:</label>
-                <input type="email" id="email" name="email" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" value="{{ old('email', $apartment->email) }}" required>
+                <p class="mt-1 text-gray-900">{{ $apartment->email }}</p>
             </div>
 
             <div>
                 <label for="apartment_name" class="block text-gray-700 font-medium">Apartment Name:</label>
-                <input type="text" id="apartment_name" name="apartment_name" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" value="{{ old('apartment_name', $apartment->apartment_name) }}" required>
+                <p class="mt-1 text-gray-900">{{ $apartment->apartment_name }}</p>
             </div>
 
             <div>
                 <label for="location" class="block text-gray-700 font-medium">Location:</label>
-                <input type="text" id="location" name="location" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" value="{{ old('location', $apartment->location) }}" placeholder="Pinpoint location on Google Maps" required>
+                <p class="mt-1 text-gray-900">{{ $apartment->location }}</p>
             </div>
 
             <div>
                 <label for="rooms_available" class="block text-gray-700 font-medium">Rooms Available:</label>
-                <input type="number" id="rooms_available" name="rooms_available" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" value="{{ old('rooms_available', $apartment->rooms_available) }}" required>
+                <p class="mt-1 text-gray-900">{{ $apartment->rooms_available }}</p>
             </div>
 
             <div>
                 <label for="room_rate" class="block text-gray-700 font-medium">Room Rate:</label>
-                <input type="text" id="room_rate" name="room_rate" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" value="{{ old('room_rate', $apartment->room_rate) }}" required>
+                <p class="mt-1 text-gray-900">{{ $apartment->room_rate }}</p>
             </div>
 
             <div>
                 <label for="apartment_image" class="block text-gray-700 font-medium">Attach Apartment Image:</label>
-                <input type="file" id="apartment_image" name="apartment_image" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                 <!-- Display current image if exists -->
                 @if($apartment->apartment_image)
                     <img src="{{ asset('storage/images/apartments/' . $apartment->apartment_image) }}" alt="Current Image" class="mt-2 max-w-xs">
+                @else
+                    <p class="mt-1 text-gray-900">No image available</p>
                 @endif
             </div>
 
             <div>
                 <label for="description" class="block text-gray-700 font-medium">Other Description:</label>
-                <textarea id="description" name="description" rows="4" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">{{ old('description', $apartment->description) }}</textarea>
+                <p class="mt-1 text-gray-900">{{ $apartment->description }}</p>
             </div>
         </div>
 

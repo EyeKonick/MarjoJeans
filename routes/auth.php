@@ -61,4 +61,6 @@ Route::middleware('auth:web')->group(function () {
 
     Route::get('/dashboard', [ UserController::class, 'index'])->name('dashboard');
     Route::get('/apartments/{id}', [ApartmentController::class, 'show'])->name('apartments.show');
+    Route::get('/search-apartments', [UserController::class, 'search'])->name('search.apartments');
+
 });

@@ -72,32 +72,32 @@
                 <label for="location" class="block text-gray-700 font-semibold mb-2">
                     Location <span class="text-red-500">*</span>
                 </label>
-                
+
                 <!-- Leaflet Map -->
                 <div id="map" style="width: 100%; height: 300px; border: 1px solid #ddd;"></div>
-                
+
                 <!-- Latitude and Longitude Inputs -->
                 <div class="mt-4">
-                    <input 
-                        type="hidden" 
-                        id="latitude" 
-                        name="latitude" 
-                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" 
-                        placeholder="Latitude" 
+                    <input
+                        type="hidden"
+                        id="latitude"
+                        name="latitude"
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Latitude"
                         readonly>
                 </div>
-                
+
                 <div class="mt-4">
-                    <input 
-                        type="hidden" 
-                        id="longitude" 
-                        name="longitude" 
-                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" 
-                        placeholder="Longitude" 
+                    <input
+                        type="hidden"
+                        id="longitude"
+                        name="longitude"
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Longitude"
                         readonly>
                 </div>
             </div>
-            
+
 
 
             <!-- Rooms Available -->
@@ -249,12 +249,12 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 
-<link 
-    rel="stylesheet" 
+<link
+    rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
 />
 
-<script 
+<script
     src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer>
 </script>
 <script>
@@ -301,7 +301,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     L.control.layers(baseLayers).addTo(map);
 
-    
+
     map.on('click', function (e) {
         const { lat, lng } = e.latlng;
         setMarker(lat, lng);

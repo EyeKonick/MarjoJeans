@@ -3,9 +3,9 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
 
             <!-- Search Bar -->
-            <form action="#" method="GET" class="mb-6">
+            <form id="search-form" action="{{ route('search.apartments') }}" method="GET" class="mb-6">
                 <div class="relative">
-                    <input type="text" id="search-input"
+                    <input type="text" name="search" id="search-input"
                         class="w-full p-4 pl-10 text-gray-900 rounded-lg shadow-md focus:ring-indigo-500 focus:border-indigo-500"
                         placeholder="Search for apartments..." />
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -22,7 +22,6 @@
 
             <!-- Apartments Display Section -->
             <div id="apartment-list" class="space-y-8">
-                <!-- Apartments will be dynamically displayed here -->
                 @foreach ($apartments as $apartment)
                     <a href="{{ route('apartments.show', $apartment->id) }}" class="block apartment-item">
                         <div
@@ -30,7 +29,6 @@
                             <div class="w-full md:w-1/3 lg:w-1/4 relative flex">
                                 <div class="w-full h-full">
                                     @php
-                                        
                                         $image = '';
                                         if (is_string($apartment->apartment_images)) {
                                             $imagesArray = json_decode($apartment->apartment_images, true);
@@ -38,10 +36,8 @@
                                                 $image = $imagesArray[0];
                                             }
                                         } elseif (is_array($apartment->apartment_images)) {
-
                                             $image = $apartment->apartment_images[0] ?? '';
                                         } else {
-                                            
                                             $image = $apartment->apartment_images;
                                         }
                                     @endphp
@@ -50,7 +46,6 @@
                                             class="w-full h-full object-cover rounded-t-lg md:rounded-t-none md:rounded-l-lg"
                                             alt="Apartment Thumbnail">
                                     @else
-                                        <!-- Fallback image if no image is available -->
                                         <img src="{{ asset('storage/images/default-thumbnail.jpg') }}"
                                             class="w-full h-full object-cover rounded-t-lg md:rounded-t-none md:rounded-l-lg"
                                             alt="Default Apartment Thumbnail">
@@ -61,8 +56,7 @@
                             <div
                                 class="w-full md:w-2/3 lg:w-2/4 p-6 flex flex-col justify-between bg-gradient-to-r from-gray-800 to-gray-900 rounded-lg md:rounded-none">
                                 <div>
-                                    <h2 class="text-3xl font-extrabold text-white mb-4">{{ $apartment->apartment_name }}
-                                    </h2>
+                                    <h2 class="text-3xl font-extrabold text-white mb-4">{{ $apartment->apartment_name }}</h2>
                                     <p class="text-lg text-gray-300 mb-2">💲 <span
                                             class="font-semibold">{{ $apartment->room_rate }}</span></p>
                                     <p class="text-lg text-gray-300 mb-2">🏘️ Rooms: <span
@@ -76,8 +70,6 @@
                         </div>
                     </a>
                 @endforeach
-
-
             </div>
 
             <!-- No Match Found Message -->
@@ -88,33 +80,35 @@
     </div>
 
     <script>
-        document.getElementById('search-input').addEventListener('input', function() {
-            let searchQuery = this.value;
+        document.getElementById('search-form').addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent default form submission behavior
+
+            let searchQuery = document.getElementById('search-input').value.trim();
             let apartmentList = document.getElementById('apartment-list');
             let noMatchMessage = document.getElementById('no-match-message');
 
-            // Make an AJAX request to search apartments
-            fetch(`{{ route('search.apartments') }}?search=` + searchQuery)
+            if (searchQuery.length === 0) {
+                noMatchMessage.classList.add('hidden');
+                apartmentList.innerHTML = '';
+                return; // Exit if search query is empty
+            }
+
+            fetch(`{{ route('search.apartments') }}?search=` + encodeURIComponent(searchQuery))
                 .then(response => response.json())
                 .then(apartments => {
-                    // Clear existing apartments
                     apartmentList.innerHTML = '';
 
-                    // Check if any apartments were found
                     if (apartments.length > 0) {
-                        noMatchMessage.classList.add('hidden'); // Hide the "No match found" message
-
-                        // Iterate through the apartments and append them to the list
+                        noMatchMessage.classList.add('hidden');
                         apartments.forEach(apartment => {
                             let apartmentHtml = `
-                              <a href="{{ route('apartments.show', $apartment->id) }}" class="block apartment-item">
+                                <a href="/apartments/${apartment.id}" class="block apartment-item">
                                     <div class="bg-gray-900 text-white overflow-hidden shadow-lg sm:rounded-lg flex flex-col md:flex-row mb-6 h-80 transition-transform duration-300 hover:scale-105">
                                         <div class="w-full md:w-1/3 lg:w-1/4 relative flex">
                                             <div class="w-full h-full">
-                                                <img src="/storage/images/apartments/${apartment.apartment_image}" class="w-full h-full object-cover rounded-t-lg md:rounded-t-none md:rounded-l-lg" alt="Apartment Image">
+                                                <img src="${apartment.thumbnail}" class="w-full h-full object-cover rounded-t-lg md:rounded-t-none md:rounded-l-lg" alt="Apartment Image">
                                             </div>
                                         </div>
-
                                         <div class="w-full md:w-2/3 lg:w-2/4 p-6 flex flex-col justify-between bg-gradient-to-r from-gray-800 to-gray-900 rounded-lg md:rounded-none">
                                             <div>
                                                 <h2 class="text-3xl font-extrabold text-white mb-4">${apartment.apartment_name}</h2>
@@ -127,13 +121,14 @@
                                     </div>
                                 </a>
                             `;
-
                             apartmentList.insertAdjacentHTML('beforeend', apartmentHtml);
                         });
                     } else {
-                        // Show the "No match found" message if no apartments match
                         noMatchMessage.classList.remove('hidden');
                     }
+                })
+                .catch(error => {
+                    console.error('Error fetching apartments:', error);
                 });
         });
     </script>
