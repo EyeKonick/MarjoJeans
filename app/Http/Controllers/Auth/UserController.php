@@ -8,42 +8,53 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    // For rendering the dashboard
     public function index()
     {
         $apartments = Apartment::where('status', 'approved')->orderBy('created_at', 'desc')->get();
         return view('dashboard', compact('apartments'));
     }
 
-    // For handling AJAX search requests
     public function search(Request $request)
     {
-        $search = $request->input('search');
+        $searchQuery = $request->input('search');
 
-        $apartments = Apartment::where('status', 'approved')
-            ->where(function ($query) use ($search) {
-                $query->where('apartment_name', 'like', '%' . $search . '%')
-                      ->orWhere('location', 'like', '%' . $search . '%')
-                      ->orWhere('landlord_name', 'like', '%' . $search . '%');
-            })
-            ->orderBy('created_at', 'desc')
-            ->get();
+        if (empty($searchQuery)) {
+            $apartments = Apartment::where('status', 'approved')->orderBy('created_at', 'desc')->get();
+        } else {
 
-        // Format the data for JSON response
-        $apartments = $apartments->map(function ($apartment) {
-            $images = json_decode($apartment->apartment_images, true) ?? [];
+            $apartments = Apartment::where('apartment_name', 'like', '%' . $searchQuery . '%')
+                ->orWhere('address', 'like', '%' . $searchQuery . '%')
+                ->orWhere('landlord_name', 'like', '%' . $searchQuery . '%')
+                ->get();
+        }
+
+        // Format the results for the frontend
+        $formattedApartments = $apartments->map(function ($apartment) {
             return [
                 'id' => $apartment->id,
                 'apartment_name' => $apartment->apartment_name,
                 'room_rate' => $apartment->room_rate,
                 'rooms_available' => $apartment->rooms_available,
-                'location' => $apartment->location,
+                'location' => $apartment->address,
                 'landlord_name' => $apartment->landlord_name,
-                'thumbnail' => count($images) > 0 ? asset('storage/images/apartments/' . $images[0]) : asset('storage/images/default-thumbnail.jpg'),
+                'thumbnail' => $this->getThumbnail($apartment->apartment_images),
             ];
         });
 
-        return response()->json($apartments);
+        return response()->json($formattedApartments);
     }
 
+    private function getThumbnail($images)
+    {
+        if (is_string($images)) {
+            $imagesArray = json_decode($images, true);
+            if (is_array($imagesArray) && count($imagesArray) > 0) {
+                return asset('storage/images/apartments/' . $imagesArray[0]);
+            }
+        } elseif (is_array($images) && count($images) > 0) {
+            return asset('storage/images/apartments/' . $images[0]);
+        }
+        return asset('storage/images/apartments/default.jpg');
+    }
 }
+

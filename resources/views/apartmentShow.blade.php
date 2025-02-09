@@ -3,9 +3,8 @@
         <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md">
             <h2 class="text-2xl font-bold mb-6">{{ $apartment->apartment_name }}</h2>
 
-            {{-- Carousel for all uploaded images --}}
             <div class="relative overflow-hidden mb-6">
-                {{-- Carousel container --}}
+
                 @php
                     if (is_string($apartment->apartment_images)) {
                         $images = json_decode($apartment->apartment_images, true);
@@ -27,8 +26,6 @@
                 @endif
 
 
-
-                {{-- Previous and Next Buttons --}}
                 <button id="prevBtn" class="absolute top-1/2 -translate-y-1/2 left-4 bg-gray-800 text-white rounded-full p-2 focus:outline-none">
                     &larr;
                 </button>
@@ -48,7 +45,7 @@
                 <p class="text-lg text-gray-700"><strong>Address:</strong> {{ $apartment->address }}</p>
             </div>
 
-            <div class="py-2"> 
+            <div class="py-2">
                 <p class="text-lg text-gray-700">
                     <strong>Location:</strong> 📍
                     <br>
@@ -100,42 +97,42 @@
         carousel.addEventListener('mouseleave', () => autoSlide = setInterval(nextSlide, intervalTime));
     </script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-    <script 
+    <script
         src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer>
     </script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const latitude = {{ $apartment->latitude }};
             const longitude = {{ $apartment->longitude }};
-            
+
             // Initialize map with default view (satellite view)
             const map = L.map("map", {
                 center: [latitude, longitude],
                 zoom: 15
             });
-    
-            
+
+
             const streetViewLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
                 maxZoom: 22,
             });
-    
-      
+
+
             const satelliteViewLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
                 maxZoom: 22,
                 attribution: 'Tiles &copy; Esri'
             });
-    
-      
+
+
             streetViewLayer.addTo(map);
-    
+
 
             const marker = L.marker([latitude, longitude]).addTo(map);
             marker.bindPopup("<b>Apartment Location</b>").openPopup();
-    
-           
+
+
             map.setView([latitude, longitude], 19);
-    
-    
+
+
             L.control.layers({
                 "Satellite View": satelliteViewLayer,
                 "Street View": streetViewLayer

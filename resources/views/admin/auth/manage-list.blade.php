@@ -1,65 +1,64 @@
 @extends('admin.dashboard')
 
 @section('content')
-<div class="max-w-7xl mx-auto bg-white p-8 rounded-lg shadow-md">
-    <h2 class="text-2xl font-bold mb-6">Manage Listings</h2>
+<div class="max-w-5xl mx-auto bg-white p-6 rounded-lg shadow-md overflow-hidden">
+    <h2 class="text-xl font-bold mb-4">Manage Listings</h2>
 
-    <!-- Table -->
-    <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
+    <!-- Table Container -->
+    <div class="w-full overflow-hidden">
+        <table class="table-auto w-full border-collapse border border-gray-300 text-sm">
+            <thead class="bg-gray-50 text-xs text-gray-600">
                 <tr>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th class="px-3 py-2 text-left font-medium uppercase border border-gray-300">
                         Apartment Name
                     </th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th class="px-3 py-2 text-left font-medium uppercase border border-gray-300">
                         Address
                     </th>
-                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th class="px-3 py-2 text-center font-medium uppercase border border-gray-300">
                         Owner Name
                     </th>
-                    <th scope="col" class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">
+                    <th class="px-3 py-2 text-center font-medium uppercase border border-gray-300">
                         Price
                     </th>
-                    <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase  tracking-wider">
+                    <th class="px-3 py-2 text-center font-medium uppercase border border-gray-300">
                         Action
                     </th>
                 </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
+            <tbody class="bg-white text-sm">
                 @foreach($manage as $listing)
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap">
+                <tr class="border border-gray-300">
+                    <td class="px-3 py-2 border border-gray-300">
                         {{ $listing['apartment_name'] }}
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
+                    <td class="px-3 py-2 border border-gray-300">
                         {{ $listing['address'] }}
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
+                    <td class="px-3 py-2 text-center border border-gray-300">
                         {{ $listing['landlord_name'] }}
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
+                    <td class="px-3 py-2 text-center border border-gray-300">
                         {{ $listing['room_rate'] }}
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
+                    <td class="px-3 py-2 text-center border border-gray-300">
                         <div class="flex justify-center space-x-2">
-                            <!-- Edit Link -->
-                            <a href="{{ route('admin.edit_apartment', $listing->id) }}" class="text-white rounded px-4 py-1 bg-blue-600 hover:bg-blue-500">Edit</a>
-                            <!-- Delete Link -->
+                            <a href="{{ route('admin.view_apartment', $listing->id) }}" class="text-white rounded px-3 py-1 bg-blue-600 hover:bg-blue-500 text-xs">View</a>
                             <form action="{{ route('admin.delete_apartment', $listing->id) }}" method="POST" class="inline-block">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-white rounded px-4 py-1 bg-red-600 hover:bg-red-500">Delete</button>
+                                <button type="submit" class="text-white rounded px-3 py-1 bg-red-600 hover:bg-red-500 text-xs">Delete</button>
                             </form>
                         </div>
                     </td>
-
                 </tr>
                 @endforeach
             </tbody>
         </table>
     </div>
-    <div class="mt-4">
+
+    <!-- Pagination -->
+    <div class="mt-4 text-sm">
         {{ $manage->links() }}
     </div>
 </div>

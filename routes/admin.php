@@ -56,16 +56,18 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/reject-apartment/{id}', [addApartmentController::class, 'rejectApartment'])->name('reject_apartment');
 
         Route::get('/user-management', [AdminController::class, 'userManagement'])->name('user_management');
+        Route::get('/user/edit/{id}/{type}', [AdminController::class, 'edit'])->name('edit.user');
+        Route::put('/user/update/{id}/{type}', [AdminController::class, 'update'])->name('update.user');
+        Route::delete('/user/delete/{id}/{type}', [AdminController::class, 'destroy'])->name('delete.user');
+        
+
 
         Route::get('/manage-list', [manageListController::class, 'manageList'])->name('manage_list');
-        Route::get('/edit-apartment/{id}', [manageListController::class, 'editApartment'])->name('edit_apartment');
+        Route::get('/view-apartment/{id}', [manageListController::class, 'viewApartment'])->name('view_apartment');
         Route::put('/update-apartment/{id}', [manageListController::class, 'updateApartment'])->name('update_apartment');
         Route::delete('/delete-apartment/{id}', [manageListController::class, 'deleteApartment'])->name('delete_apartment');
 
         Route::get('/overview', [OverviewController::class, 'index'])->name('overview');
-        Route::get('/landlords/{id}/edit', [AdminController::class, 'edit'])->name('landlords.edit');
-        Route::delete('/landlords/{id}', [AdminController::class, 'destroy'])->name('landlords.delete');
-        Route::put('/landlords/{id}/update', [AdminController::class, 'update'])->name('landlords.update');
 
     });
 });

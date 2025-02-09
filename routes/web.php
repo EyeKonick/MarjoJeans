@@ -22,12 +22,6 @@ Route::middleware('auth')->group(function () {
 
 
 
-Route::get('/dashboard', [UserController::class, 'index'])->name('dashboard');
-Route::get('/search-apartments', [UserController::class, 'search'])->name('search.apartments');
-
-
-
-
 require __DIR__.'/auth.php';
 require __DIR__.'/admin.php';
 require __DIR__.'/landlord.php';

@@ -16,10 +16,10 @@ class manageListController extends Controller
         return view('admin.auth.manage-list', compact('manage'));
     }
 
-    public function editApartment($id)
+    public function viewApartment($id)
     {
         $apartment = Apartment::findOrFail($id);
-        return view('admin.auth.update-apartment', compact('apartment'));
+        return view('admin.auth.view-apartment', compact('apartment'));
     }
 
     public function updateApartment(Request $request, $id)
@@ -49,7 +49,7 @@ class manageListController extends Controller
         if ($apartment->apartment_image) {
             Storage::disk('public')->delete('images/apartments/' . $apartment->apartment_image);
         }
-        
+
         $apartment->apartment_image = $imageName;
         $apartment->save();
     }

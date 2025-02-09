@@ -1,4 +1,4 @@
-<aside class="w-64 h-full shadow-md bg-gray-500">
+<aside class="h-full shadow-md bg-gray-500">
     <nav class="grid grid-cols-1 gap-4 py-6 px-4 bg-gray-500 text-xl">
         <a href="{{ route('admin.overview') }}" class="block text-white hover:bg-white hover:text-gray-900 py-3 px-4 rounded-lg transition duration-150 ease-in-out">
             Overview
