@@ -17,14 +17,14 @@ class LandlordController extends Controller
     public function edit(Request $request, $id)
     {
         $apartment = Apartment::findOrFail($id);
-        $redirect = $request->input('redirect', 'list_uploads'); // Default to 'list_uploads' if no redirect is provided
+        $redirect = $request->input('redirect', 'list_uploads');
 
         return view('landlord.auth.update-apartment', compact('apartment', 'redirect'));
     }
 
     public function update(Request $request, $id)
     {
-        // Validate the request
+
         $validated = $request->validate([
             'landlord_name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
@@ -37,12 +37,12 @@ class LandlordController extends Controller
             'apartment_images' => 'nullable|array',
             'apartment_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             'description' => 'nullable|string',
-            'deleted_images' => 'nullable|string', // For removing existing images
+            'deleted_images' => 'nullable|string',
         ]);
 
         $apartment = Apartment::findOrFail($id);
 
-        // Update basic fields
+
         $apartment->fill([
             'landlord_name' => $validated['landlord_name'],
             'address' => $validated['address'],
@@ -55,22 +55,20 @@ class LandlordController extends Controller
             'description' => $validated['description'],
         ]);
 
-        // Handle image removal
+
         $existingImages = json_decode($apartment->apartment_images, true) ?? [];
         if ($request->has('deleted_images') && !empty($request->deleted_images)) {
             $deletedImages = explode(',', $request->deleted_images);
             foreach ($deletedImages as $deletedImage) {
                 if (($key = array_search($deletedImage, $existingImages)) !== false) {
-                    // Delete the image from storage
-                    Storage::delete("public/images/apartments/$deletedImage");
 
-                    // Remove the image from the array
+                    Storage::delete("public/images/apartments/$deletedImage");
                     unset($existingImages[$key]);
                 }
             }
         }
 
-        // Handle new image uploads
+
         if ($request->hasFile('apartment_images')) {
             foreach ($request->file('apartment_images') as $file) {
                 $filename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
@@ -81,10 +79,10 @@ class LandlordController extends Controller
             }
         }
 
-        // Update the images field in the database
+
         $apartment->apartment_images = json_encode(array_values($existingImages));
 
-        // Save the updated apartment
+
         $apartment->save();
 
         return redirect()->route('landlord.list_uploads')->with('success', 'Apartment updated successfully.');

@@ -74,9 +74,9 @@
                 let searchQuery = searchInput.value.trim();
 
                 if (searchQuery.length === 0) {
-                    // If search is empty, display all apartments
+
                     noMatchMessage.classList.add('hidden');
-                    apartmentList.innerHTML = ''; // Clear current list
+                    apartmentList.innerHTML = ''; 
                     fetch(searchRoute)
                         .then(response => {
                             if (!response.ok) {

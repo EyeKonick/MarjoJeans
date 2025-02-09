@@ -28,7 +28,6 @@ class UserController extends Controller
                 ->get();
         }
 
-        // Format the results for the frontend
         $formattedApartments = $apartments->map(function ($apartment) {
             return [
                 'id' => $apartment->id,
